@@ -30,7 +30,7 @@ class Alarm {
 			$this->default_time = $user['default_wakeup_time'];
 			$this->default_unix = strtotime(date('Y-m-d ', time()) . $this->default_time);
 
-			$this->espeak = 'Good morning ' . $this->user['name'] . '! The current time is ' . date('h i A', $this->now) . '. ';
+			$this->espeak = 'Good morning ' . $this->user['name'] . '! The current time is ' . date('g:i A', $this->now) . '. ';
 
 			$this->parseCalendar();
 			$this->checkAlarm();
@@ -96,7 +96,7 @@ class Alarm {
 		//get the closest event in the future, and see if we should sound the alarm
 		foreach($this->db->query("SELECT * FROM events WHERE trigger_date BETWEEN '" . date('Y-m-d H:i:s', $this->now - 30) . "' AND '" . date('Y-m-d H:i:s', $this->now + 30) . "' AND user_id = " . $this->user['id'] . " ORDER BY trigger_date ASC") as $event) {
 				if ($event['title'] !== 'alarm')
-					$this->espeak .= 'Your first appointment is: ' . $event['title'] . ' at ' . date('h i A', strtotime($event['actual_date'])) . '. ';
+					$this->espeak .= 'Your first appointment is: ' . $event['title'] . ' at ' . date('g:i A', strtotime($event['actual_date'])) . '. ';
 				$this->triggerAlarm($event['id']);
 		}
 
