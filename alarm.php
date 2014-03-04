@@ -136,7 +136,7 @@ class Alarm {
 			$this->espeak .= ' It is currently ' . $temp . ' degrees. Looks like ' . $conditions . '. Visibility is ' . $visibility . ' miles. Winds are currently ' . $wind_speed . ' miles per hour, with gusts up to ' . $wind_gust . ' miles per hour.';
 		}
 		shell_exec(escapeshellcmd(APP_PATH . 'mpcfade.sh 100 70 .1')); //fade volume out
-		shell_exec(escapeshellcmd('espeak -s 130 --stdout "' . $this->espeak . '" | aplay')); //use stdout & aplay because of a rpi bug?
+		shell_exec('espeak -s 130 --stdout "' . escapeshellcmd($this->espeak) . '" | aplay'); //use stdout & aplay because of a rpi bug?
 		shell_exec(escapeshellcmd(APP_PATH . 'mpcfade.sh 70 100 .1')); //fade volume in
 	}
 
