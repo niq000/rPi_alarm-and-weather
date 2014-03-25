@@ -20,5 +20,4 @@ Alarm will go off under the following circumstances:
 Install / Usage:
 - add user information to the sqlite database
 	- INSERT INTO users (name, default_wakeup_time, event_buffer, xml_calendar_url, json_weather_url) VALUES ('jacob jingleheimer smith', '08:00:00', -5400, 'http://www.google.com/calendar/feeds/_your_google_username_%40gmail.com/private-aaaaaa9a9a9a9a9a9a9a9a9a9a/basic', 'http://api.wunderground.com/api/abc1234567890/conditions/q/XX/Some_City.json');
-- edit the APP_PATH in alarm.php to suit your environment
-- setup a cron job to run a script that instantiates the Alarm class with the user_id from the users table. eg: new Alarm(1);
+- setup a cron job to run something similar to examples/cron.php
