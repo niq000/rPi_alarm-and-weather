@@ -45,7 +45,7 @@ class Alarm {
 		$this->trigger = false;
 
 		//$this->db = new PDO('sqlite:' . APP_PATH . 'alarm.db');
-		$this->db = new PDO('sqlite:/home/nick/rPi_alarm-and-weather/alarm.db');
+		$this->db = new PDO('sqlite:' . APP_PATH . 'alarm.db');
 
 		foreach($this->db->query('SELECT * FROM users WHERE id = ' . $user_id) as $user) {
 			$this->user = $user;
