@@ -1,8 +1,10 @@
 <?php
 
+include_once('mpc.php');
+
 define('APP_PATH', dirname(__DIR__) . '/');
 
-class Alarm {
+class Alarm extends Mpc {
   //xml google calendar url
 	public $calendar_url;
 
@@ -39,8 +41,10 @@ class Alarm {
 	//string of jibberish to speak when the alarm goes off
 	public $espeak;
 
+  //switch if music is on/off
+  public $music;
+
 	public function __construct($user_id = null) {
-    echo "\n" . APP_PATH . "\n";
 		$this->now = time();
 		$this->trigger = false;
 
@@ -57,8 +61,8 @@ class Alarm {
 
 			$this->espeak = 'Good morning ' . $this->user['name'] . '! The current time is ' . date('g:i A', $this->now) . '. ';
 
-			$this->parseCalendar();
 			$this->checkAlarm();
+			$this->parseCalendar();
 		}
 	}
 
@@ -129,10 +133,10 @@ class Alarm {
       date('Y-m-d H:i:s', $this->now + 30) . "' AND user_id = " . $this->user['id'] . " ORDER BY trigger_date ASC";
 
 		foreach($this->db->query($query) as $event) {
-				if ($event['title'] !== 'alarm')
-					$this->espeak .= 'Your first appointment is: ' . $event['title'] . ' at ' . 
-            date('g:i A', strtotime($event['actual_date'])) . '. ';
-				$this->triggerAlarm($event['id']);
+			if ($event['title'] !== 'alarm')
+				$this->espeak .= 'Your first appointment is: ' . $event['title'] . ' at ' . 
+          date('g:i A', strtotime($event['actual_date'])) . '. ';
+			$this->triggerAlarm($event['id']);
 		}
 
 		//no events to trigger the alarm, but what about the default time to go off?
@@ -151,7 +155,9 @@ class Alarm {
 		if ($id !== null) //nothing to delete
 			$this->deleteEvent($id);
 
-		$this->playMusic();
+    $this->run('volume 0'); //turn volume down so we can fade it in
+		$this->run('play');
+    $this->fadeIn(20, 50, 30);
 		$this->speakWeather();
 	}
 
@@ -175,13 +181,9 @@ class Alarm {
     //use stdout & aplay because of a rpi bug?
 		shell_exec('espeak -s 130 --stdout "' . $this->espeak . '" | aplay');
     
-    //fade volume in
-		shell_exec(escapeshellcmd(APP_PATH . '/scripts/mpcfade.sh 40 100 .1'));
-	}
-
-	public function playMusic() {
-    //ease the music on
-		shell_exec(escapeshellcmd('mpc play && ' . APP_PATH . '/scripts/mpcfade.sh 0 40 .5'));
+    //crank the volume up
+    if ($this->playing)
+      $this->fadeIn(50, 100, 15);
 	}
 }
 
